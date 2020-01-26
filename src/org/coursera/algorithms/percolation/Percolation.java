@@ -3,15 +3,15 @@ package org.coursera.algorithms.percolation;
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
-    private WeightedQuickUnionUF uf;
-    private int n;
-    private int vTop;
-    private int vBottom;
+    private final WeightedQuickUnionUF uf;
+    private final int n;
+    private final int vTop;
+    private final int vBottom;
     private boolean[] open;
 
     // creates n-by-n grid, with all sites initially blocked
     public Percolation(int n) {
-        if(n <= 0) throw new IllegalArgumentException();
+        if (n <= 0) throw new IllegalArgumentException();
         this.n = n;
         this.vTop = 0;
         this.vBottom = n * n + 1;
@@ -20,21 +20,21 @@ public class Percolation {
     }
 
     private int getArrayNumber(int row, int col) {
-        if(row <= 0 || row > n || col <= 0 || col > n) throw new IllegalArgumentException();
+        if (row <= 0 || row > n || col <= 0 || col > n) throw new IllegalArgumentException();
         return n * row - (n - col);
     }
 
     // opens the site (row, col) if it is not open already
     public void open(int row, int col) {
-        if(isOpen(row, col)) return;
+        if (isOpen(row, col)) return;
         int p = getArrayNumber(row, col);
-        if(row > 1 && isOpen(row - 1, col)) uf.union(p, getArrayNumber(row - 1, col));
-        if(row < n && isOpen(row + 1, col)) uf.union(p, getArrayNumber(row + 1, col));
-        if(col > 1 && isOpen(row, col - 1)) uf.union(p, getArrayNumber(row, col - 1));
-        if(col < n && isOpen(row, col + 1)) uf.union(p, getArrayNumber(row, col + 1));
+        if (row > 1 && isOpen(row - 1, col)) uf.union(p, getArrayNumber(row - 1, col));
+        if (row < n && isOpen(row + 1, col)) uf.union(p, getArrayNumber(row + 1, col));
+        if (col > 1 && isOpen(row, col - 1)) uf.union(p, getArrayNumber(row, col - 1));
+        if (col < n && isOpen(row, col + 1)) uf.union(p, getArrayNumber(row, col + 1));
 
-        if(row == 1) uf.union(p, vTop);
-        if(row == n) uf.union(p, vBottom);
+        if (row == 1) uf.union(p, vTop);
+        if (row == n) uf.union(p, vBottom);
 
         open[p - 1] = true;
     }
@@ -47,7 +47,7 @@ public class Percolation {
 
     // is the site (row, col) full?
     public boolean isFull(int row, int col) {
-        return !isOpen(row, col);
+        return isOpen(row, col) && uf.connected(vTop, getArrayNumber(row, col));
     }
 
     // returns the number of open sites
